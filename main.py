@@ -46,23 +46,43 @@ def df2dy(_x, _y):
     return p
 
 
-#Градиентный спуск для функции Бута
-def gradient_descent_booth(x_start, y_start, a, points_arr, counter):
-    for i in range(counter):
-        x_new = x_start - a * df2dx(x_start, y_start)
-        y_new = y_start - a * df2dy(x_start, y_start)
-        points_arr.append((x_new, y_new))
-        x_start = x_new
-        y_start = y_new
-    return points_arr
-    # _ax.scatter(x_new, y_new, z_new, color='r')
+# #Градиентный спуск для функции Бута
+# def gradient_descent_booth(x_start, y_start, a, counter):
+#     points_arr = []
+#     for i in range(counter):
+#         x_new = x_start - a * df2dx(x_start, y_start)
+#         y_new = y_start - a * df2dy(x_start, y_start)
+#         points_arr.append((x_new, y_new))
+#         x_start = x_new
+#         y_start = y_new
+#     return points_arr
+#     # _ax.scatter(x_new, y_new, z_new, color='r')
+#
+#
+# #Градиентный спуск для функции Экли
+# def gradient_descent_eckley(x_start, y_start, a, counter):
+#     points_arr = []
+#     for i in range(counter):
+#         x_new = x_start - a * df1dx(x_start, y_start)
+#         y_new = y_start - a * df1dy(x_start, y_start)
+#         points_arr.append((x_new, y_new))
+#         x_start = x_new
+#         y_start = y_new
+#     return points_arr
 
 
-#Градиентный спуск для функции Экли
-def gradient_descent_eckley(x_start, y_start, a, points_arr, counter):
+def gradient_descent(fun_name, x_start, y_start, a, counter):
+    points_arr = []
     for i in range(counter):
-        x_new = x_start - a * df1dx(x_start, y_start)
-        y_new = y_start - a * df1dy(x_start, y_start)
+        if fun_name == 'e':
+            x_new = x_start - a * df1dx(x_start, y_start)
+            y_new = y_start - a * df1dy(x_start, y_start)
+        elif fun_name == 'b':
+            x_new = x_start - a * df2dx(x_start, y_start)
+            y_new = y_start - a * df2dy(x_start, y_start)
+        else:
+            print('Данной функции не существует')
+            break
         points_arr.append((x_new, y_new))
         x_start = x_new
         y_start = y_new
@@ -83,15 +103,17 @@ z2 = f2(x, y)
 ax1 = build_graf(fig, 1, 2, 1, 'Eckley Function', x, y, z1)
 ax2 = build_graf(fig, 1, 2, 2, 'Booth Function', x, y, z2)
 
-arr = []
-a = 0.1
-p_list = gradient_descent_booth(4, 4, a, arr, 1000)
 
-x1 = p_list[len(p_list) - 1][0]
-y1 = p_list[len(p_list) - 1][1]
+a = 0.1
+e_list = gradient_descent('e', 4, 4, a,  1000)
+# e_list = gradient_descent_eckley(4, 4, a, 1000)
+
+x1 = e_list[len(e_list) - 1][0]
+y1 = e_list[len(e_list) - 1][1]
+n_z = np.meshgrid(x1, y1)
 
 #Минимум функции Экли
-n_z = np.meshgrid(x1, y1)
+
 print(f'Функция Бута (обычный градиентный спуск): f2({x1}, {y1}) = {f2(x1, y1)}')
 ax2.scatter(x1, y1, f2(x1, y1), color='r')
 # for i in range(len(p_list)):
