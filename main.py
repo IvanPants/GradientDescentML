@@ -46,6 +46,7 @@ def df2dy(_x, _y):
     return p
 
 
+#Градиентный спуск для функции Бута
 def gradient_descent_booth(x_start, y_start, a, points_arr, counter):
     for i in range(counter):
         x_new = x_start - a * df2dx(x_start, y_start)
@@ -57,6 +58,7 @@ def gradient_descent_booth(x_start, y_start, a, points_arr, counter):
     # _ax.scatter(x_new, y_new, z_new, color='r')
 
 
+#Градиентный спуск для функции Экли
 def gradient_descent_eckley(x_start, y_start, a, points_arr, counter):
     for i in range(counter):
         x_new = x_start - a * df1dx(x_start, y_start)
@@ -70,12 +72,14 @@ def gradient_descent_eckley(x_start, y_start, a, points_arr, counter):
 matplotlib.use("TkAgg")
 fig = plt.figure()
 
+#Данные для построение графиков
 x = np.linspace(-5, 5, 100)
 y = np.linspace(-5, 5, 100)
 x, y = np.meshgrid(x, y)
 z1 = f1(x, y)
 z2 = f2(x, y)
 
+#Построить граффик
 ax1 = build_graf(fig, 1, 2, 1, 'Eckley Function', x, y, z1)
 ax2 = build_graf(fig, 1, 2, 2, 'Booth Function', x, y, z2)
 
@@ -86,6 +90,7 @@ p_list = gradient_descent_booth(4, 4, a, arr, 1000)
 x1 = p_list[len(p_list) - 1][0]
 y1 = p_list[len(p_list) - 1][1]
 
+#Минимум функции Экли
 n_z = np.meshgrid(x1, y1)
 print(f'Функция Бута (обычный градиентный спуск): f2({x1}, {y1}) = {f2(x1, y1)}')
 ax2.scatter(x1, y1, f2(x1, y1), color='r')
