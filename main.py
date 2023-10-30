@@ -106,15 +106,22 @@ ax2 = build_graf(fig, 1, 2, 2, 'Booth Function', x, y, z2)
 
 a = 0.1
 e_list = gradient_descent('e', 4, 4, a,  1000)
-# e_list = gradient_descent_eckley(4, 4, a, 1000)
+b_list = gradient_descent('b', 4, 4, a, 1000)
 
 x1 = e_list[len(e_list) - 1][0]
 y1 = e_list[len(e_list) - 1][1]
-n_z = np.meshgrid(x1, y1)
+x1, y1 = np.meshgrid(x1, y1)
 
 #Минимум функции Экли
+print(f'Функция Экли (обычный градиентный спуск): f1({x1}, {y1}) = {f1(x1, y1)}')
+ax1.scatter(x1, y1, f1(x1, y1), color='r')
 
-print(f'Функция Бута (обычный градиентный спуск): f2({x1}, {y1}) = {f2(x1, y1)}')
+x2 = b_list[len(b_list) - 1][0]
+y2 = b_list[len(b_list) - 1][1]
+x2, y2 = np.meshgrid(x2, y2)
+
+#Минимум функции Бута
+print(f'Функция Бута (обычный градиентный спуск): f1({x2}, {y2}) = {f2(x1, y1)}')
 ax2.scatter(x1, y1, f2(x1, y1), color='r')
 # for i in range(len(p_list)):
 #     ax2.scatter(p_list[i][0], p_list[i][1], z1, color='r')
