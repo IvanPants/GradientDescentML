@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from sympy.utilities.lambdify import lambdify
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import time
 
 
@@ -16,7 +15,6 @@ def build_graf(_fig, line, column, index, title, _x, _y, _z):
         ax.set_zlabel('Z')
 
         return ax
-
 
 
 # Функция Экли
@@ -51,20 +49,38 @@ def df2dy(_x, _y):
 
 
 def f3(_x, _y):
-    user_input = input('Введите функцию : ')
-    #user_input = "x**2 + y**2"
+    #user_input = input('Введите функцию : ')
+    user_input = "x**2 + y**2"
     x, y = sp.symbols('x y', real=True)
     locals = {'x': x, 'y': y}
     expr = sp.sympify(user_input, locals=locals)
-    print(f'user_input = {expr}')
+    #print(f'user_input = {expr}')
     f = lambdify([x, y], expr, 'numpy')
     # expr = expr.subs('x', _x)
     # expr = expr.subs('y', _y)
 
-    return f(_x, _y)
+    return f(_x, _y), expr
 
 
-def gradient_descent(fun_name, x_start, y_start, a, counter):
+def df3dx(_x, _y, expr):
+    x, y = sp.symbols('x y', real=True)
+    p = sp.diff(expr, x)
+    p = p.subs(y, _y)
+    p = p.subs(x, _x)
+
+    return p
+
+
+def df3dy(_x, _y, expr):
+    x, y = sp.symbols('x y', real=True)
+    p = sp.diff(expr, y)
+    p = p.subs(x, _x)
+    p = p.subs(y, _y)
+
+    return p
+
+
+def gradient_descent(fun_name, x_start, y_start, a, counter, expr):
     points_arr = []
     for i in range(counter):
         if fun_name == 'e':
@@ -73,12 +89,16 @@ def gradient_descent(fun_name, x_start, y_start, a, counter):
         elif fun_name == 'b':
             x_new = x_start - a * df2dx(x_start, y_start)
             y_new = y_start - a * df2dy(x_start, y_start)
+        elif fun_name == 'u':
+            x_new = x_start - a * df3dx(x_start, y_start, expr)
+            y_new = y_start - a * df3dy(x_start, y_start, expr)
         else:
             print('Данной функции не существует')
             break
         points_arr.append((x_new, y_new))
         x_start = x_new
         y_start = y_new
+
     return points_arr
 
 
@@ -91,16 +111,19 @@ y = np.linspace(-5, 5, 100)
 x, y = np.meshgrid(x, y)
 z1 = f1(x, y)
 z2 = f2(x, y)
-z3 = f3(x, y)
+z3, expr = f3(x, y)
+print('user_input', expr)
 
 #Построить граффик
 ax1 = build_graf(fig, 1, 3, 1, 'Eckley Function', x, y, z1)
 ax2 = build_graf(fig, 1, 3, 2, 'Booth Function', x, y, z2)
 ax3 = build_graf(fig, 1, 3, 3, 'User Function', x, y, z3)
 
+#классический градиентный спуск
 a = 0.1
-e_list = gradient_descent('e', 4, 4, a,  1000)
-b_list = gradient_descent('b', 4, 4, a, 1000)
+e_list = gradient_descent('e', 4, 4, a,  1000, None)
+b_list = gradient_descent('b', 4, 4, a, 1000, None)
+u_list = gradient_descent('u', 4, 4, a, 1000, expr)
 
 x1 = e_list[len(e_list) - 1][0]
 y1 = e_list[len(e_list) - 1][1]
@@ -119,6 +142,15 @@ print(f'Функция Бута (обычный градиентный спус�
 ax2.scatter(x1, y1, f2(x1, y1), color='r')
 # for i in range(len(p_list)):
 #     ax2.scatter(p_list[i][0], p_list[i][1], z1, color='r')
+
+#Минимум Пользовательской функции
+x3 = u_list[len(u_list)-1][0]
+y3 = u_list[len(u_list)-1][1]
+x3, y3 = np.meshgrid(x3, y3)
+
+x, y = sp.symbols('x y', real=True)
+f = lambdify([x, y], expr, 'numpy')
+ax3.scatter(x3, y3, f(x3, y3), color='r')
 
 plt.show()
 
