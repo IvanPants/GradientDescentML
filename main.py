@@ -106,6 +106,21 @@ def gradient_descent(fun_name, x_start, y_start, a, counter, expr):
     return points_arr
 
 
+def apply_gradient_descent(arr, title, ax, fun, expr):
+    _x = arr[len(arr)-1][0]
+    _y = arr[len(arr)-1][1]
+    if expr == None:
+        print(f'{title} (классический градиентный спуск) : f({_x},{_y})= {fun(_x, _y)}')
+        ax.scatter(_x, _y, fun(_x, _y), color='r')
+    else:
+        x, y = sp.symbols('x y', real=True)
+        f = expr
+        f = f.evalf(subs={x: _x})
+        f = f.evalf(subs={y: _y})
+        print(f'{title} (классический градиентный спуск) : f({_x},{_y})= {f}')
+        ax.scatter(_x, _y, f, color='r')
+
+
 matplotlib.use("TkAgg")
 fig = plt.figure()
 
@@ -123,40 +138,16 @@ ax1 = build_graf(fig, 1, 3, 1, 'Eckley Function', x, y, z1)
 ax2 = build_graf(fig, 1, 3, 2, 'Booth Function', x, y, z2)
 ax3 = build_graf(fig, 1, 3, 3, 'User Function', x, y, z3)
 
-#классический градиентный спуск
+#Классический градиентный спуск
 a = 0.1
 e_list = gradient_descent('e', 4, 4, a,  1000, None)
 b_list = gradient_descent('b', 4, 4, a, 1000, None)
 u_list = gradient_descent('u', 4, 4, a, 1000, expr)
 
-x1 = e_list[len(e_list) - 1][0]
-y1 = e_list[len(e_list) - 1][1]
-x1, y1 = np.meshgrid(x1, y1)
-
-#Минимум функции Экли
-print(f'Функция Экли (обычный градиентный спуск): f1({x1}, {y1}) = {f1(x1, y1)}')
-ax1.scatter(x1, y1, f1(x1, y1), color='r')
-
-x2 = b_list[len(b_list) - 1][0]
-y2 = b_list[len(b_list) - 1][1]
-x2, y2 = np.meshgrid(x2, y2)
-
-#Минимум функции Бута
-print(f'Функция Бута (обычный градиентный спуск): f1({x2}, {y2}) = {f2(x1, y1)}')
-ax2.scatter(x1, y1, f2(x1, y1), color='r')
-# for i in range(len(p_list)):
-#     ax2.scatter(p_list[i][0], p_list[i][1], z1, color='r')
-
-#Минимум Пользовательской функции
-x3 = u_list[len(u_list)-1][0]
-y3 = u_list[len(u_list)-1][1]
-
-x, y = sp.symbols('x y', real=True)
-f = expr
-f = f.evalf(subs={x: x3})
-f = f.evalf(subs={y: y3})
-ax3.scatter(x3, y3, f, color='r')
-print(f'Пользовательская функция (обычный градиентный спуск): f3({x3}, {y3}) = {f}')
+#Нарисовать минимум на ргаффике
+apply_gradient_descent(e_list, 'Функция Экли', ax1, f1, None)
+apply_gradient_descent(b_list, 'Функция Бута', ax2, f2, None)
+apply_gradient_descent(u_list, 'Функция Пользователя', ax3, None, expr)
 
 plt.show()
 
