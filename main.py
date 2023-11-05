@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from sympy.utilities.lambdify import lambdify
-from sympy import cos,sin,pi,E,exp
+from sympy import cos, sin, pi, E, exp
 import time
 
 
