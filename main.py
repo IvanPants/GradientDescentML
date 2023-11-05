@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from sympy.utilities.lambdify import lambdify
+from sympy import cos,sin,pi,E,exp
 import time
 
 
@@ -50,7 +51,10 @@ def df2dy(_x, _y):
 
 def f3(_x, _y):
     #user_input = input('Введите функцию : ')
-    user_input = "x**2 + y**2"
+    user_input = "x**2 + y**2+cos(x*y)"
+    # user_input = "- 20 * exp(-0.2 * sqrt(0.5 * (x ** 2 + y ** 2))) -\
+    #          exp(0.5 * (cos(2 * pi * x) + cos(2 * pi * y))) + E + 20"
+    #user_input = "(x + 2 * y - 7) ** 2 + (2 * x + y - 5) ** 2"
     x, y = sp.symbols('x y', real=True)
     locals = {'x': x, 'y': y}
     expr = sp.sympify(user_input, locals=locals)
@@ -65,17 +69,17 @@ def f3(_x, _y):
 def df3dx(_x, _y, expr):
     x, y = sp.symbols('x y', real=True)
     p = sp.diff(expr, x)
-    p = p.subs(y, _y)
-    p = p.subs(x, _x)
+    p = p.evalf(subs={y: _y})
+    p = p.evalf(subs={x: _x})
 
-    return p
+    return p.evalf()
 
 
 def df3dy(_x, _y, expr):
     x, y = sp.symbols('x y', real=True)
     p = sp.diff(expr, y)
-    p = p.subs(x, _x)
-    p = p.subs(y, _y)
+    p = p.evalf(subs={x: _x})
+    p = p.evalf(subs={y: _y})
 
     return p
 
@@ -146,11 +150,13 @@ ax2.scatter(x1, y1, f2(x1, y1), color='r')
 #Минимум Пользовательской функции
 x3 = u_list[len(u_list)-1][0]
 y3 = u_list[len(u_list)-1][1]
-x3, y3 = np.meshgrid(x3, y3)
 
 x, y = sp.symbols('x y', real=True)
-f = lambdify([x, y], expr, 'numpy')
-ax3.scatter(x3, y3, f(x3, y3), color='r')
+f = expr
+f = f.evalf(subs={x: x3})
+f = f.evalf(subs={y: y3})
+ax3.scatter(x3, y3, f, color='r')
+print(f'Пользовательская функция (обычный градиентный спуск): f3({x3}, {y3}) = {f}')
 
 plt.show()
 
