@@ -84,7 +84,7 @@ def df3dy(_x, _y, expr):
     return p
 
 
-def gradient_descent(fun_name, x_start, y_start, a, counter, expr):
+def gradient_descent(fun_name, x_start, y_start, a, counter, expr=None):
     points_arr = []
     for i in range(counter):
         if fun_name == 'e':
@@ -106,7 +106,7 @@ def gradient_descent(fun_name, x_start, y_start, a, counter, expr):
     return points_arr
 
 
-def apply_gradient_descent(arr, title, ax, fun, expr):
+def apply_gradient_descent(arr, title, ax, fun=None):
     _x = arr[len(arr)-1][0]
     _y = arr[len(arr)-1][1]
     if expr == None:
@@ -140,14 +140,14 @@ ax3 = build_graf(fig, 1, 3, 3, 'User Function', x, y, z3)
 
 #Классический градиентный спуск
 a = 0.1
-e_list = gradient_descent('e', 4, 4, a,  1000, None)
-b_list = gradient_descent('b', 4, 4, a, 1000, None)
+e_list = gradient_descent('e', 4, 4, a,  1000)
+b_list = gradient_descent('b', 4, 4, a, 1000)
 u_list = gradient_descent('u', 4, 4, a, 1000, expr)
 
 #Нарисовать минимум на ргаффике
-apply_gradient_descent(e_list, 'Функция Экли', ax1, f1, None)
-apply_gradient_descent(b_list, 'Функция Бута', ax2, f2, None)
-apply_gradient_descent(u_list, 'Функция Пользователя', ax3, None, expr)
+apply_gradient_descent(e_list, 'Функция Экли', ax1, f1)
+apply_gradient_descent(b_list, 'Функция Бута', ax2, f2)
+apply_gradient_descent(u_list, 'Функция Пользователя', ax3, expr)
 
 plt.show()
 
