@@ -11,6 +11,9 @@ def build_graf(_fig, line, column, index, title, _x, _y, _z):
         ax = _fig.add_subplot(line, column, index, projection='3d')
         ax.plot_surface(_x, _y, _z, alpha=0.25)
         ax.title.set_text(title)
+        # ax.set_xlim((-15, 15))
+        # ax.set_ylim((-15, 15))
+        # ax.set_zlim((-15, 15))
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
@@ -40,13 +43,11 @@ def f2(_x, _y):
 
 
 def df2dx(_x, _y):
-    p = 10 * _x + 8 * _y - 34
-    return p
+    return 10 * _x + 8 * _y - 34
 
 
 def df2dy(_x, _y):
-    p = 8 * _x + 10 * _y - 38
-    return p
+    return 8 * _x + 10 * _y - 38
 
 
 def f3(_x, _y):
@@ -66,39 +67,29 @@ def f3(_x, _y):
     return f(_x, _y), expr
 
 
-def df3dx(_x, _y, expr):
+def df3dx(_x, _y):
     x, y = sp.symbols('x y', real=True)
-    p = sp.diff(expr, x)
+    p = sp.diff(glob_expr, x)
     p = p.evalf(subs={y: _y})
     p = p.evalf(subs={x: _x})
 
     return p.evalf()
 
 
-def df3dy(_x, _y, expr):
+def df3dy(_x, _y):
     x, y = sp.symbols('x y', real=True)
-    p = sp.diff(expr, y)
+    p = sp.diff(glob_expr, y)
     p = p.evalf(subs={x: _x})
     p = p.evalf(subs={y: _y})
 
     return p
 
 
-def gradient_descent(fun_name, x_start, y_start, a, counter, expr=None):
+def gradient_descent(fun1, fun2, x_start, y_start, a, counter=None):
     points_arr = []
     for i in range(counter):
-        if fun_name == 'e':
-            x_new = x_start - a * df1dx(x_start, y_start)
-            y_new = y_start - a * df1dy(x_start, y_start)
-        elif fun_name == 'b':
-            x_new = x_start - a * df2dx(x_start, y_start)
-            y_new = y_start - a * df2dy(x_start, y_start)
-        elif fun_name == 'u':
-            x_new = x_start - a * df3dx(x_start, y_start, expr)
-            y_new = y_start - a * df3dy(x_start, y_start, expr)
-        else:
-            print('Данной функции не существует')
-            break
+        x_new = x_start - a * fun1(x_start, y_start)
+        y_new = y_start - a * fun2(x_start, y_start)
         points_arr.append((x_new, y_new))
         x_start = x_new
         y_start = y_new
@@ -106,19 +97,37 @@ def gradient_descent(fun_name, x_start, y_start, a, counter, expr=None):
     return points_arr
 
 
-def apply_gradient_descent(arr, title, ax, fun=None):
-    _x = arr[len(arr)-1][0]
-    _y = arr[len(arr)-1][1]
-    if expr == None:
-        print(f'{title} (классический градиентный спуск) : f({_x},{_y})= {fun(_x, _y)}')
-        ax.scatter(_x, _y, fun(_x, _y), color='r')
-    else:
-        x, y = sp.symbols('x y', real=True)
-        f = expr
-        f = f.evalf(subs={x: _x})
-        f = f.evalf(subs={y: _y})
-        print(f'{title} (классический градиентный спуск) : f({_x},{_y})= {f}')
-        ax.scatter(_x, _y, f, color='r')
+def instant_gradient_descent():
+    pass
+
+
+def animate_grad_descent(arr):
+    pass
+
+
+# def apply_gradient_descent(arr, title, ax, fun=None):
+#     x, y = sp.symbols('x y', real=True)
+#     x_start = arr[0][0]
+#     y_start = arr[1][1]
+#     ax.scatter3D(x_start, y_start, fun(x_start, y_start), s=10, ec='green', marker='X')
+#     for i in range(1, len(arr)-2):
+#         f = expr
+#         _x = arr[i][0]
+#         _y = arr[i][1]
+#         f = f.evalf(subs={x: _x})
+#         f = f.evalf(subs={y: _y})
+#         ax.scatter3D(_x, _y, fun(_x, _y), s=10, ec='black', marker='v')
+#     ax.scatter3D(arr[len(arr)-1][0], arr[len(arr)-1][0], fun(arr[len(arr)-1][0], arr[len(arr)-1][0]), s=10, ec='red', marker='D')
+#     if expr == None:
+#         print(f'{title} (классический градиентный спуск) : f({_x},{_y})= {fun(_x, _y)}')
+#         # ax.scatter(_x, _y, fun(_x, _y), color='r')
+#     else:
+#         # x, y = sp.symbols('x y', real=True)
+#         # f = expr
+#         # f = f.evalf(subs={x: _x})
+#         # f = f.evalf(subs={y: _y})
+#         print(f'{title} (классический градиентный спуск) : f({_x},{_y})= {f}')
+#         # ax.scatter(_x, _y, f, color='r')
 
 
 matplotlib.use("TkAgg")
@@ -130,8 +139,9 @@ y = np.linspace(-5, 5, 100)
 x, y = np.meshgrid(x, y)
 z1 = f1(x, y)
 z2 = f2(x, y)
-z3, expr = f3(x, y)
-print('user_input', expr)
+z3, glob_expr = f3(x, y)
+
+print('user_input', glob_expr)
 
 #Построить граффик
 ax1 = build_graf(fig, 1, 3, 1, 'Eckley Function', x, y, z1)
@@ -140,14 +150,16 @@ ax3 = build_graf(fig, 1, 3, 3, 'User Function', x, y, z3)
 
 #Классический градиентный спуск
 a = 0.1
-e_list = gradient_descent('e', 4, 4, a,  1000)
-b_list = gradient_descent('b', 4, 4, a, 1000)
-u_list = gradient_descent('u', 4, 4, a, 1000, expr)
+e_list = gradient_descent(df1dx, df1dy, 2, 2, a,  1000)
+b_list = gradient_descent(df2dx, df2dy, 4, 4, a, 1000)
+u_list = gradient_descent(df3dx, df3dy, 4, 4, a, 1000)
+print(e_list)
 
-#Нарисовать минимум на ргаффике
-apply_gradient_descent(e_list, 'Функция Экли', ax1, f1)
-apply_gradient_descent(b_list, 'Функция Бута', ax2, f2)
-apply_gradient_descent(u_list, 'Функция Пользователя', ax3, expr)
+# Нарисовать минимум на ргаффике
+# apply_gradient_descent(e_list, 'Функция Экли', ax1, f1)
+# apply_gradient_descent(b_list, 'Функция Бута', ax2, f2)
+# apply_gradient_descent(u_list, 'Функция Пользователя', ax3, expr)
+
 
 plt.show()
 
